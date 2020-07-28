@@ -11,8 +11,13 @@
 ;;; PDF manipulation functions
 ;;;
 
-(define pdftocairo-exe-path "c:/adam/code/poppler-windows/poppler-0.68.0/bin/pdftocairo.exe")
-(define pdfinfo-exe-path "c:/adam/code/poppler-windows/poppler-0.68.0/bin/pdfinfo.exe")
+;; Poppler paths
+(define pdftocairo-exe-path (if (eq? (system-type 'os) 'windows)
+                                "c:/adam/code/poppler-windows/poppler-0.68.0/bin/pdftocairo.exe"
+                                "pdftocairo"))
+(define pdfinfo-exe-path (if (eq? (system-type 'os) 'windows)
+                             "c:/adam/code/poppler-windows/poppler-0.68.0/bin/pdfinfo.exe"
+                             "pdfinfo"))
 
 ;; rasterise pdf file into png image file
 (define (pdf-to-png resolution-dpi input-bytes)
@@ -65,21 +70,20 @@
 ;;; Exceptions and structures
 ;;;
 
+
 ;;;; exception handling wrapper
 ;(define simple (with-handlers ([exn:fail? (lambda (v) 'io-failed)])
-;                 (println "Hello, something went wrong, you're in an exception handling routine. Bad news, can't recover from here.")))
+;                 (println "Hello.")))
 ;
 ;
-;;;; making a struct with getter handlers
+;;;; make a struct with getter handlers
 ;(struct pdf-meta (author paper-size orientation creation-date software pdf-version encryption))
 ;
 ;(define my-pdf (pdf-meta "Adam Jaworski" "A3" "landscape" "03-04-2020" "Word" 1.4 'no))
 ;
-;
+;;;; now access the fields
 ;(println (pdf-meta-author my-pdf))
 ;(println (pdf-meta-paper-size my-pdf))
-;
-;
 
 ;;;
 ;;; Image transformation
@@ -116,9 +120,6 @@
 
 (define (pick-folder)
   (get-directory "Choose a root folder for the search space."))
-
-
-;;; folder picker
 
 
 
