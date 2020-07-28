@@ -65,21 +65,21 @@
 ;;; Exceptions and structures
 ;;;
 
-;;; exception handling wrapper
-(define simple (with-handlers ([exn:fail? (lambda (v) 'io-failed)])
-                 (println "Hello.")))
-
-
-;;; making a struct with getter handlers
-(struct pdf-meta (author paper-size orientation creation-date software pdf-version encryption))
-
-(define my-pdf (pdf-meta "Adam Jaworski" "A3" "landscape" "03-04-2020" "Word" 1.4 'no))
-
-
-(println (pdf-meta-author my-pdf))
-(println (pdf-meta-paper-size my-pdf))
-
-
+;;;; exception handling wrapper
+;(define simple (with-handlers ([exn:fail? (lambda (v) 'io-failed)])
+;                 (println "Hello, something went wrong, you're in an exception handling routine. Bad news, can't recover from here.")))
+;
+;
+;;;; making a struct with getter handlers
+;(struct pdf-meta (author paper-size orientation creation-date software pdf-version encryption))
+;
+;(define my-pdf (pdf-meta "Adam Jaworski" "A3" "landscape" "03-04-2020" "Word" 1.4 'no))
+;
+;
+;(println (pdf-meta-author my-pdf))
+;(println (pdf-meta-paper-size my-pdf))
+;
+;
 
 ;;;
 ;;; Image transformation
@@ -107,17 +107,20 @@
 (define (convert-pdf-to-png filename)
   (write-bytes-to-file (string-append filename ".png") (pdf-to-png 300 (read-bytes-from-file filename))))
 
-
-(define files '(
-"\\\\Global.arup.com\\london\\BEL\\Jobs\\200000\\262000\\262233-00 BRENTFORD FC - CMR\\1 Client\\01 Commission\\200327_Covid.pdf"
-"\\\\Global.arup.com\\london\\BEL\\Jobs\\200000\\262000\\262233-00 BRENTFORD FC - CMR\\1 Client\\01 Commission\\200327_COVID19.pdf"
-"\\\\Global.arup.com\\london\\BEL\\Jobs\\200000\\262000\\262233-00 BRENTFORD FC - CMR\\1 Client\\01 Commission\\200327_Suspension_DRAFT.pdf"
-"\\\\Global.arup.com\\london\\BEL\\Jobs\\200000\\262000\\262233-00 BRENTFORD FC - CMR\\1 Client\\01 Commission\\200414_Suspension.pdf"
-"\\\\Global.arup.com\\london\\BEL\\Jobs\\200000\\262000\\262233-00 BRENTFORD FC - CMR\\2 Project Administration\\02 Quality Assurance\\EITCP.pdf"))
-
 ;;;
 ;;; File handling and hashing
 ;;;
+
+;;; folder picker
+(require racket/gui/base)
+
+(define (pick-folder)
+  (get-directory "Choose a root folder for the search space."))
+
+
+;;; folder picker
+
+
 
 ;;; generate sha-256 hash
 (define (sha-256-as-string bstr)
