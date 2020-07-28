@@ -119,7 +119,7 @@
 (require racket/gui/base)
 
 (define (pick-folder)
-  (get-directory "Choose a root folder for the search space."))
+  (path->string (get-directory "Choose a root folder for the search space.")))
 
 
 
@@ -158,10 +158,13 @@
 ; why does this crash?
 ; (for ([f (in-directory "C:\\adam")] #:when (regexp-match? "\\.pdf$" f)) (display f))
 
+
+
 ;; get list of pdf file candidates from source directory
 ;; this one works, accelerated by using shell commands
-(define (get-list-of-pdf-files d)
+(define (get-file-list-metadata d)
   (let*-values ([(command) (if (eq? (system-type 'os) 'windows)
+                               ; output strings are relatively robust, could break if filenames contain \n characters
                                (string-append "powershell.exe "
                                               "-noprofile "
                                               "-command \""
@@ -174,7 +177,7 @@
                                               "\"")
                                (string-append "find "
                                               "-L "
-                                              "\\\"" (path->string (simplify-path d)) "\\\" "
+                                              "\"" (path->string (simplify-path d)) "\" "
                                               "-iname \"*.pdf\" "
                                               "-ignore_readdir_race "
                                               "-printf \"%p\n%s\n%TY-%Tm-%Td %TH:%TM:%TS %TZ\n\""))]
@@ -187,6 +190,10 @@
                           (reverse output-strings))
       (displayln line))))
 
+;(define (get-file-list-metadata-names fm-list)
+;  (for [(xxxxxxxxxxxxxxxx '() fm-list (first list)
+
+    
 ; (close-output-port stdin)
 ; (close-input-port stderr)   
 ; (port->lines stdout #:line-mode line-terminator)))
