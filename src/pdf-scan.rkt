@@ -157,7 +157,8 @@
 ;    f))
 ; why does this crash?
 ; (for ([f (in-directory "C:\\adam")] #:when (regexp-match? "\\.pdf$" f)) (display f))
-
+; this is now fixed, adding line breaks per file.
+; (for ([f (in-directory "C:\\adam\\personal")] #:when (regexp-match? "\\.pdf$" f)) (display (string-append (path->string f) "\n")))
 
 
 ;; get list of pdf file candidates from source directory
