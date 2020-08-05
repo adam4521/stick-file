@@ -13,11 +13,11 @@
 
 ;; Poppler paths
 (define pdftocairo-exe-path (if (eq? (system-type 'os) 'windows)
-                                "c:/adam/code/poppler-windows/poppler-0.68.0/bin/pdftocairo.exe"
-                                "pdftocairo"))
+                                "../bin/pdftocairo.exe"
+                                "../bin/pdftocairo"))
 (define pdfinfo-exe-path (if (eq? (system-type 'os) 'windows)
-                             "c:/adam/code/poppler-windows/poppler-0.68.0/bin/pdfinfo.exe"
-                             "pdfinfo"))
+                             "../bin/pdfinfo.exe"
+                             "../bin/pdfinfo"))
 
 ;; rasterise pdf file into png image file
 (define (pdf-to-png resolution-dpi input-bytes)
@@ -155,11 +155,26 @@
 ;(define (get-list-of-pdf-files d)
 ;  (for/list ([f (in-directory d)] #:when (regexp-match? "\\.pdf$" f))
 ;    f))
-; why does this crash?
+; why do these crash?
 ; (for ([f (in-directory "C:\\adam")] #:when (regexp-match? "\\.pdf$" f)) (display f))
-; this is now fixed, adding line breaks per file.
 ; (for ([f (in-directory "C:\\adam\\personal")] #:when (regexp-match? "\\.pdf$" f)) (display (string-append (path->string f) "\n")))
+; (for/list ([f (in-directory "C:\\adam\\personal")] #:when (regexp-match? #rx"\\.pdf$" (path->string f))) f)
+; (for/list ([f (in-directory "C:\\adam\\personal")] #:when (regexp-match? #rx"\\.pdf$" (path->string f))) f)
+; (for ([f (in-directory "C:\\adam\\personal")] #:when (regexp-match? #rx"\\.pdf$" (path->string f))) (displayln (path->string f))
+; (for ([f (in-directory "C:\\adam\\personal")] #:when (regexp-match? #rx"\\.pdf$" (path->string f))) (displayln (path->string f))
+; (for ([f (in-directory "C:\\adam\\personal")] #:when (regexp-match? #rx"\\.pdf$" (path->string f))) (displayln (path->string f))
+; (for ([f (in-directory "C:\\adam\\personal")]) (cond [(regexp-match? #rx"\\.pdf$" (path->string f)) (displayln (path->string f))] [else (display ".")]))
+; (for ([f (in-directory "C:\\adam\\personal")]) (cond [(regexp-match? #rx"\\.pdf$" (path->string f)) (begin (display "\n") (display (path->string f)))] [else (display ".")]))
+; (with-output-to-file "results.txt" (lambda () (for ([f (in-directory "C:\\adam\\personal")]) (cond [(regexp-match? #rx"\\.pdf$" (path->string f)) (begin (display "\n") (displayln (path->string f)))] [else (display ".")]))) #:exists 'replace)
 
+(define (walker d)
+  (with-output-to-file "results.txt"
+    (lambda ()
+      (for ([f (in-directory d)] #:when (regexp-match? #rx"\\.pdf$" (path->string f)))
+        (displayln (path->string f)))) #:exists 'replace))
+
+
+; (walker "J:\\200000\\229000\\229222-00 Macallan Distillery")
 
 ;; get list of pdf file candidates from source directory
 ;; this one works, accelerated by using shell commands
