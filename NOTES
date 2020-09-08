@@ -7,3 +7,9 @@ Alternative backends include Poppler and MuPDF
 https://poppler.freedesktop.org/
 https://mupdf.com/downloads/
 
+PDFium test app
+pdfium_test --png --md5 /path/to/t.pdf
+pdfium_test --txt /path/to/t.pdf
+
+
+
