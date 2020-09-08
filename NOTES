@@ -1,0 +1,9 @@
+depot_tools, for installation/building of PDFium
+https://www.chromium.org/developers/how-tos/depottools
+PDFium sources
+https://pdfium.googlesource.com/pdfium/
+
+Alternative backends include Poppler and MuPDF
+https://poppler.freedesktop.org/
+https://mupdf.com/downloads/
+
