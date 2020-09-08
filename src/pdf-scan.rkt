@@ -1,10 +1,11 @@
 #lang racket
 
+;;; uuid and yaml libraries require installation from package manager
 (require racket/system
          racket/draw
          file/sha1
          net/base64
-         uuid
+         uuid  
          yaml)
 
 ;;;
@@ -18,6 +19,9 @@
 (define pdfinfo-exe-path (if (eq? (system-type 'os) 'windows)
                              "../bin/pdfinfo.exe"
                              "../bin/pdfinfo"))
+(define pdftext-exe-path (if (eq? (system-type 'os) 'windows)
+                             "../bin/pdftext.exe"
+                             "../bin/pdftext"))
 
 ;; rasterise pdf file into png image file
 (define (pdf-to-png resolution-dpi input-bytes)
@@ -111,6 +115,20 @@
 (define (convert-pdf-to-png filename)
   (write-bytes-to-file (string-append filename ".png") (pdf-to-png 300 (read-bytes-from-file filename))))
 
+(define (info-pdf filename)
+  (pdf-to-info (read-bytes-from-file filename)))
+
+
+(define (info-pdf-1 filename)
+  (let-values ([(subproc stdout stdin stderr) (subprocess #f #f #f pdfinfo-exe-path filename)]
+               [(line-terminator) (if (eq? (system-type 'os) 'windows) 'return-linefeed 'linefeed)])
+    (close-output-port stdin)
+    (do ([line (read-line stdout line-terminator) (read-line stdout line-terminator)]
+         [output-strings '() (cons line output-strings)])
+      ((eof-object? line) (close-input-port stdout)
+                          (close-input-port stderr)
+                          (reverse output-strings)))))
+
 ;;;
 ;;; File handling and hashing
 ;;;
@@ -167,14 +185,6 @@
 ; (for ([f (in-directory "C:\\adam\\personal")]) (cond [(regexp-match? #rx"\\.pdf$" (path->string f)) (begin (display "\n") (display (path->string f)))] [else (display ".")]))
 ; (with-output-to-file "results.txt" (lambda () (for ([f (in-directory "C:\\adam\\personal")]) (cond [(regexp-match? #rx"\\.pdf$" (path->string f)) (begin (display "\n") (displayln (path->string f)))] [else (display ".")]))) #:exists 'replace)
 
-(define (walker d)
-  (with-output-to-file "results.txt"
-    (lambda ()
-      (for ([f (in-directory d)] #:when (regexp-match? #rx"\\.pdf$" (path->string f)))
-        (displayln (path->string f)))) #:exists 'replace))
-
-
-; (walker "J:\\200000\\229000\\229222-00 Macallan Distillery")
 
 ;; get list of pdf file candidates from source directory
 ;; this one works, accelerated by using shell commands
@@ -205,6 +215,33 @@
                           (close-input-port stderr)
                           (reverse output-strings))
       (displayln line))))
+
+; probably need to change this so that it is a for loop that fires events rather than builds a list
+; to avoid long blocking.
+(define (get-file-list-metadata-portable d)
+  (for/list ([f (in-directory d)] #:when (regexp-match? #rx"\\.(?i:pdf)$" (path->string f)))
+    (list (path->string f) (file-size f) (file-or-directory-modify-seconds f))))
+  
+; (find-files (lambda (x) (regexp-match? #rx"\\.(?i:pdf)$" x)) (string->path "../test"))                                  
+
+(define (walker d)
+  (with-output-to-file "results.txt"
+    (lambda ()
+      (get-file-list-metadata-portable d)) #:exists 'replace))
+
+(define (external-walker d)
+  (with-output-to-file "results.txt"
+    (lambda ()
+      (get-file-list-metadata d)) #:exists 'replace))
+
+;(walker "\\\\?\\J:\\200000\\229000\\229222-00 Macallan Distillery")
+;(external-walker "J:\\200000\\229000\\229222-00 Macallan Distillery")
+
+
+(define deep-path "\\\\?\\J:\\200000\\229000\\229222-00 Macallan Distillery\\4 Internal Data\\04 Calculations\\05 Mechanical\\05 Loads, Energy Source\\SS\\IES Model For Review\\IES Modelling Folder Structure\\2_Evidence\\2_As_Designed\\3_Systems\\150603 TENDER T2 issue - Specs & Non Issued Drawings")
+(define shallow-path "\\\\?\\J:\\200000\\229000\\229222-00 Macallan Distillery\\4 Internal Data\\04 Calculations\\05 Mechanical\\05 Loads, Energy Source\\SS\\IES Model For Review\\IES Modelling Folder Structure")
+
+
 
 ;(define (get-file-list-metadata-names fm-list)
 ;  (for [(xxxxxxxxxxxxxxxx '() fm-list (first list)
