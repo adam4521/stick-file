@@ -234,18 +234,11 @@
     (lambda ()
       (get-file-list-metadata d)) #:exists 'replace))
 
-;(walker "\\\\?\\J:\\200000\\229000\\229222-00 Macallan Distillery")
-;(external-walker "J:\\200000\\229000\\229222-00 Macallan Distillery")
-
-
-(define deep-path "\\\\?\\J:\\200000\\229000\\229222-00 Macallan Distillery\\4 Internal Data\\04 Calculations\\05 Mechanical\\05 Loads, Energy Source\\SS\\IES Model For Review\\IES Modelling Folder Structure\\2_Evidence\\2_As_Designed\\3_Systems\\150603 TENDER T2 issue - Specs & Non Issued Drawings")
-(define shallow-path "\\\\?\\J:\\200000\\229000\\229222-00 Macallan Distillery\\4 Internal Data\\04 Calculations\\05 Mechanical\\05 Loads, Energy Source\\SS\\IES Model For Review\\IES Modelling Folder Structure")
-
-
+;(walker "\\\\?\\C:\\aaa\\bbb\\ccc")
+;(external-walker "C:\\aaa\\bbb\\ccc"")
 
 ;(define (get-file-list-metadata-names fm-list)
 ;  (for [(xxxxxxxxxxxxxxxx '() fm-list (first list)
-
     
 ; (close-output-port stdin)
 ; (close-input-port stderr)   
